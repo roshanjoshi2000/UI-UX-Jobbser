@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Jobbser Database Schema — Interview Pack</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --color-primary: #4912ff;
+      --color-primary-hover: #3a0ecc;
+      --color-primary-subtle: rgba(73, 18, 255, 0.05);
+      --color-on-primary: #f5f5f5;
+      --color-brand-ink: #0a083f;
+      --color-warn: #b45309;
+      --color-warn-subtle: #fff7ed;
+      --color-bg: #ffffff;
+      --color-bg-secondary: #f5f5f5;
+      --color-border: #d9d9d9;
+      --color-text-primary: #1a1a1a;
+      --color-text-muted: #49454f;
+      --color-text-tertiary: #777777;
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --font-family: "Inter", "Segoe UI", sans-serif;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background:
+        radial-gradient(ellipse 90% 60% at 0% -10%, rgba(73, 18, 255, 0.12), transparent 55%),
+        radial-gradient(ellipse 70% 50% at 100% 0%, rgba(139, 163, 255, 0.18), transparent 50%),
+        var(--color-bg-secondary);
+      color: var(--color-text-primary);
+      font-family: var(--font-family);
+      line-height: 1.55;
+    }
+    .container { max-width: 980px; margin: 0 auto; padding: 28px 20px 64px; }
+    .hero {
+      background: linear-gradient(145deg, #0a083f 0%, #1a0a6e 42%, #4912ff 100%);
+      color: var(--color-on-primary);
+      border-radius: var(--radius-lg);
+      padding: 28px 26px 30px;
+      margin-bottom: 18px;
+      box-shadow: 0 12px 32px rgba(73, 18, 255, 0.28);
+    }
+    .hero h1 { margin: 0 0 8px; font-size: 1.7rem; letter-spacing: -0.02em; }
+    .hero .meta { opacity: 0.9; margin-bottom: 12px; }
+    .hero p { margin: 0 0 8px; max-width: 52rem; }
+    .badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 9999px;
+      background: rgba(255, 255, 255, 0.16);
+      border: 1px solid rgba(255, 255, 255, 0.28);
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin: 0 6px 8px 0;
+    }
+    .card {
+      background: var(--color-bg);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      padding: 22px;
+      margin-bottom: 16px;
+      box-shadow: 0 2px 8px rgba(10, 8, 63, 0.04);
+    }
+    .card h2 { margin: 0 0 10px; font-size: 1.2rem; color: var(--color-brand-ink); }
+    .card h3 { margin: 0 0 8px; font-size: 1.05rem; color: var(--color-brand-ink); }
+    .card p, .card li { color: var(--color-text-muted); }
+    .card ul { margin: 8px 0 0; padding-left: 1.25rem; }
+    .small { font-size: 0.88rem; color: var(--color-text-tertiary); }
+    a { color: var(--color-primary); text-decoration: none; font-weight: 600; }
+    a:hover { text-decoration: underline; }
+    .highlight {
+      background: var(--color-primary-subtle);
+      border-left: 3px solid var(--color-primary);
+      padding: 12px 14px;
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+      margin: 12px 0;
+      color: var(--color-text-muted);
+    }
+    .note {
+      background: var(--color-warn-subtle);
+      border: 1px solid #f3d1aa;
+      border-left: 5px solid #d67f00;
+      padding: 12px 14px;
+      border-radius: 8px;
+      color: var(--color-warn);
+      margin: 12px 0;
+    }
+    .toc-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 6px 16px;
+      margin-top: 8px;
+    }
+    .toc-grid a { font-size: 0.92rem; }
+    .group-title {
+      grid-column: 1 / -1;
+      margin: 12px 0 4px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--color-brand-ink);
+    }
+    .group-title:first-child { margin-top: 0; }
+    table.cols {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+      margin-top: 10px;
+    }
+    table.cols th, table.cols td {
+      border: 1px solid var(--color-border);
+      padding: 8px 10px;
+      text-align: left;
+      vertical-align: top;
+    }
+    table.cols th { background: #f0eeff; color: var(--color-brand-ink); }
+    code, .mono {
+      font-family: ui-monospace, Consolas, monospace;
+      font-size: 0.86em;
+      background: #f0eeff;
+      padding: 1px 5px;
+      border-radius: 4px;
+    }
+    .table-card {
+      scroll-margin-top: 16px;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-sm);
+      padding: 16px 18px;
+      margin-top: 14px;
+      background: #fafaff;
+    }
+    .table-card .table-name {
+      font-family: ui-monospace, Consolas, monospace;
+      font-size: 1.05rem;
+      color: var(--color-primary);
+    }
+    .pill {
+      display: inline-block;
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 9999px;
+      background: var(--color-primary-subtle);
+      color: var(--color-primary);
+      margin-left: 6px;
+      vertical-align: middle;
+    }
+    .pill-warn {
+      background: var(--color-warn-subtle);
+      color: var(--color-warn);
+    }
+    .back { font-size: 0.85rem; margin-top: 10px; }
+    .mermaid-wrap {
+      background: #fff;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-sm);
+      padding: 12px;
+      overflow-x: auto;
+      margin-top: 10px;
+    }
+    .rel-list li { margin-bottom: 6px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <header class="hero">
+      <h1>Jobbser database schema</h1>
+      <div class="meta">Shareable excerpt for internship take-home tasks · MySQL</div>
+      <span class="badge">Sanitized for candidates</span>
+      <span class="badge">From AppDbContext models</span>
+      <p>
+        Logical schema of the Jobbser API database as reflected in application models.
+        Use this for subscription, reporting, and backend design exercises.
+        It is a design reference — not a live dump and not a guarantee of every index or legacy column.
+      </p>
+    </header>
+
+    <div class="card" id="top">
+      <h2>Contents</h2>
+      <div class="toc-grid">
+        <div class="group-title">Orientation</div>
+        <a href="#conventions">Conventions &amp; naming traps</a>
+        <a href="#relationships">Key relationships</a>
+        <a href="#erd">ER overview</a>
+
+        <div class="group-title">Accounts &amp; profile</div>
+        <a href="#companies">companies</a>
+        <a href="#workers">workers</a>
+        <a href="#addresses">addresses</a>
+        <a href="#skills">skills</a>
+        <a href="#education">education</a>
+        <a href="#work_history">work_history</a>
+        <a href="#certificates">certificates</a>
+
+        <div class="group-title">Jobs &amp; hiring</div>
+        <a href="#job_posts">job_posts</a>
+        <a href="#applications">applications</a>
+        <a href="#jobs">jobs (hire ledger)</a>
+        <a href="#connections">connections</a>
+        <a href="#vouchers">vouchers</a>
+
+        <div class="group-title">Referrals &amp; metrics</div>
+        <a href="#referral_links">referral_links</a>
+        <a href="#job_metrics">job_metrics</a>
+        <a href="#referrals">referrals</a>
+        <a href="#open_referrals">open_referrals</a>
+        <a href="#invite_links">invite_links</a>
+
+        <div class="group-title">Messaging &amp; notifications</div>
+        <a href="#message_threads">message_threads</a>
+        <a href="#messages">messages</a>
+        <a href="#notifications">notifications</a>
+        <a href="#devices">devices</a>
+
+        <div class="group-title">Auth &amp; ops (sensitive)</div>
+        <a href="#oauth_access_tokens">oauth_access_tokens</a>
+        <a href="#password_resets">password_resets</a>
+        <a href="#feedback">feedback</a>
+      </div>
+    </div>
+
+    <div class="card" id="conventions">
+      <h2>Conventions &amp; naming traps</h2>
+      <div class="note">
+        <strong>Naming trap:</strong>
+        <code>job_posts</code> = job <em>listings</em> on the map.
+        <code>jobs</code> = <em>hire ledger</em> rows written when a company hires a worker for a listing.
+        Almost every other table’s <code>job_id</code> means <code>job_posts.id</code>.
+      </div>
+      <ul>
+        <li><strong>Workers vs companies:</strong> Workers are people looking for work; companies post and hire. Subscription take-homes are <strong>company-only</strong> (workers stay free).</li>
+        <li><strong>user_id</strong> in applications, skills, education, etc. usually means <code>workers.id</code>.</li>
+        <li><strong>Polymorphic columns:</strong> <code>addresses.entity_type</code> / <code>entity_id</code>; <code>notifications.notifiable_*</code>; <code>devices.devicable_*</code> (company or worker).</li>
+        <li><strong>Payments today:</strong> Job activation is tracked on <code>job_posts.paid</code> + <code>active</code> (Stripe Checkout). There is <strong>no</strong> subscription table yet — that is a design gap for interview tasks.</li>
+        <li><strong>Sanitization:</strong> Password / token columns are listed so you know they exist. Treat values as secrets; never invent real tokens in submissions.</li>
+      </ul>
+      <p class="back"><a href="#top">↑ Back to contents</a></p>
+    </div>
+
+    <div class="card" id="relationships">
+      <h2>Key relationships</h2>
+      <ul class="rel-list">
+        <li><a href="#companies">companies</a> 1→N <a href="#job_posts">job_posts</a> (<code>company_id</code>)</li>
+        <li><a href="#job_posts">job_posts</a> 1→N <a href="#applications">applications</a> (<code>job_id</code>)</li>
+        <li><a href="#workers">workers</a> 1→N <a href="#applications">applications</a> (<code>user_id</code>)</li>
+        <li><a href="#companies">companies</a> N↔N <a href="#workers">workers</a> via <a href="#connections">connections</a></li>
+        <li>Hire event → row in <a href="#jobs">jobs</a> (<code>workerId</code>, <code>jobId</code>=post, <code>companyId</code>)</li>
+        <li><a href="#companies">companies</a> + <a href="#workers">workers</a> → <a href="#message_threads">message_threads</a> → <a href="#messages">messages</a></li>
+        <li>Share token: <a href="#referral_links">referral_links</a> (global per sharer); per-job connected-worker metrics: <a href="#job_metrics">job_metrics</a></li>
+        <li>Successful referral attribution: <a href="#referrals">referrals</a> / pending external: <a href="#open_referrals">open_referrals</a></li>
+        <li>Company team-join token: <a href="#invite_links">invite_links</a> (not job share)</li>
+        <li>Location: <a href="#addresses">addresses</a> for company, worker, or job post via <code>entity_type</code></li>
+      </ul>
+      <p class="back"><a href="#top">↑ Back to contents</a></p>
+    </div>
+
+    <div class="card" id="erd">
+      <h2>ER overview</h2>
+      <p class="small">Simplified — not every edge drawn.</p>
+      <div class="mermaid-wrap">
+        <pre class="mermaid">
+erDiagram
+  companies ||--o{ job_posts : posts
+  companies ||--o{ connections : has
+  companies ||--o{ invite_links : team_invite
+  companies ||--o{ message_threads : chats
+  workers ||--o{ applications : applies
+  workers ||--o{ connections : joins
+  workers ||--o{ message_threads : chats
+  workers ||--o{ skills : has
+  workers ||--o{ education : has
+  workers ||--o{ work_history : has
+  workers ||--o{ certificates : has
+  workers ||--o{ referral_links : share_token
+  job_posts ||--o{ applications : receives
+  job_posts ||--o{ job_metrics : metrics
+  job_posts ||--o{ referrals : attributed
+  message_threads ||--o{ messages : contains
+  job_posts ||--o{ jobs : hire_ledger
+  workers ||--o{ jobs : hired
+  companies ||--o{ jobs : hired
+        </pre>
+      </div>
+      <p class="back"><a href="#top">↑ Back to contents</a></p>
+    </div>
+
+    <!-- ========== ACCOUNTS ========== -->
+
+    <div class="card">
+      <h2>Accounts &amp; profile</h2>
+
+      <div class="table-card" id="companies">
+        <h3><span class="table-name">companies</span></h3>
+        <p>Employer accounts. Post jobs, hire, message workers, pay to activate listings.</p>
+        <table class="cols">
+          <thead><tr><th>Column</th><th>Type (logical)</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td><code>id</code></td><td>int PK</td><td></td></tr>
+            <tr><td><code>email</code></td><td>string</td><td>Login identity</td></tr>
+            <tr><td><code>name</code></td><td>string</td><td>Company display name</td></tr>
+            <tr><td><code>status</code></td><td>string</td><td>Account status</td></tr>
+            <tr><td><code>password</code></td><td>string</td><td class="small">Hashed — sensitive</td></tr>
+            <tr><td><code>email_verified_at</code></td><td>datetime?</td><td></td></tr>
+            <tr><td><code>logo</code></td><td>string?</td><td>Asset URL / key</td></tr>
+            <tr><td><code>images</code></td><td>string?</td><td>Gallery (serialized / JSON-ish)</td></tr>
+            <tr><td><code>about</code></td><td>string?</td><td></td></tr>
+            <tr><td><code>website</code></td><td>string?</td><td></td></tr>
+            <tr><td><code>onboarding_complete</code></td><td>bool?</td><td></td></tr>
+            <tr><td><code>created_at</code> / <code>updated_at</code></td><td>datetime?</td><td></td></tr>
+          </tbody>
+        </table>
+        <p class="back"><a href="#top">↑ Contents</a> · Related: <a href="#job_posts">job_posts</a>, <a href="#connections">connections</a>, <a href="#invite_links">invite_links</a></p>
+      </div>
+
+      <div class="table-card" id="workers">
+        <h3><span class="table-name">workers</span></h3>
+        <p>People looking for work. Always free in product terms for subscription exercises.</p>
+        <table class="cols">
+          <thead><tr><th>Column</th><th>Type (logical)</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td><code>id</code></td><td>int PK</td><td>Often referenced as <code>user_id</code> elsewhere</td></tr>
+            <tr><td><code>email</code></td><td>string</td><td></td></tr>
+            <tr><td><code>first_name</code> / <code>last_name</code></td><td>string</td><td></td></tr>
+            <tr><td><code>description</code></td><td>string?</td><td>About / bio (model property <code>About</code>)</td></tr>
+            <tr><td><code>status</code></td><td>string</td><td></td></tr>
+            <tr><td><code>email_verified_at</code></td><td>datetime?</td><td></td></tr>
+            <tr><td><code>radius</code></td><td>int</td><td>Search / map radius</td></tr>
+            <tr><td><code>radius_measurement</code></td><td>string</td><td>e.g. km / mi</td></tr>
+            <tr><td><code>logo</code></td><td>string?</td><td>Avatar</td></tr>
+            <tr><td><code>password</code></td><td>string</td><td class="small">Hashed — sensitive</td></tr>
+            <tr><td><code>onboarding_complete</code></td><td>bool?</td><td></td></tr>
+            <tr><td><code>created_at</code> / <code>updated_at</code></td><td>datetime</td><td></td></tr>
+          </tbody>
+        </table>
+        <p class="back"><a href="#top">↑ Contents</a> · Related: <a href="#applications">applications</a>, <a href="#skills">skills</a>, <a href="#referral_links">referral_links</a></p>
+      </div>
+
+      <div class="table-card" id="addresses">
+        <h3><span class="table-name">addresses</span> <span class="pill">polymorphic</span></h3>
+        <p>Locations for companies, workers, or job posts via <code>entity_type</code> + <code>entity_id</code>.</p>
+        <table class="cols">
+          <thead><tr><th>Column</th><th>Type (logical)</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td><code>id</code></td><td>int PK</td><td></td></tr>
+            <tr><td><code>entity_type</code></td><td>string</td><td>e.g. company / worker / job</td></tr>
+            <tr><td><code>entity_id</code></td><td>int</td><td></td></tr>
+            <tr><td><code>email</code></td><td>string?</td><td></td></tr>
+            <tr><td><code>street_1</code> / <code>street_2</code></td><td>string?</td><td></td></tr>
+            <tr><td><code>city</code> / <code>county</code> / <code>zip</code> / <code>country</code></td><td>string?</td><td></td></tr>
+            <tr><td><code>latitude</code> / <code>longitude</code></td><td>string?</td><td>Stored as strings in model</td></tr>
+            <tr><td><code>created_at</code> / <code>updated_at</code></td><td>datetime?</td><td></td></tr>
+          </tbody>
+        </table>
+        <p class="back"><a href="#top">↑ Contents</a></p>
+      </div>
+
+      <div class="table-card" id="skills">
+        <h3><span class="table-name">skills</span></h3>
+        <table class="cols">
+          <thead><tr><th>Column</th><th>Type</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td><code>id</code></td><td>int PK</td><td></td></tr>
+            <tr><td><code>user_id</code></td><td>int</td><td>→ <a href="#workers">workers.id</a></td></tr>
+            <tr><td><code>name</code></td><td>string</td><td></td></tr>
+            <tr><td><code>created_at</code> / <code>updated_at</code></td><td>datetime?</td><td></td></tr>
+          </tbody>
+        </table>
+        <p class="back"><a href="#top">↑ Contents</a></p>
+      </div>
+
+      <div class="table-card" id="education">
+        <h3><span class="table-name">education</span></h3>
+        <table class="cols">
+          <thead><tr><th>Column</th><th>Type</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td><code>id</code></td><td>int PK</td><td></td></tr>
+            <tr><td><code>user_id</code></td><td>int</td><td>→ workers</td></tr>
+            <tr><td><code>name</code></td><td>string</td><td></td></tr>
+            <tr><td><code>created_at</code> / <code>updated_at</code></td><td>datetime?</td><td></td></tr>
+          </tbody>
+        </table>
+        <p class="back"><a href="#top">↑ Contents</a></p>
+      </div>
+
+      <div class="table-card" id="work_history">
+        <h3><span class="table-name">work_history</span></h3>
+        <table class="cols">
+          <thead><tr><th>Column</th><th>Type</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td><code>id</code></td><td>int PK</td><td></td></tr>
+            <tr><td><code>user_id</code></td><td>int</td><td>→ workers</td></tr>
+            <tr><td><code>title</code> / <code>employer</code> / <code>description</code></td><td>string</td><td></td></tr>
+            <tr><td><code>start_date</code></td><td>datetime</td><td></td></tr>
+            <tr><td><code>end_date</code></td><td>datetime?</td><td></td></tr>
+            <tr><td><code>present</code></td><td>bool</td><td>Current role</td></tr>
+            <tr><td><code>created_at</code> / <code>updated_at</code></td><td>datetime</td><td></td></tr>
+          </tbody>
+        </table>
+        <p class="back"><a href="#top">↑ Contents</a></p>
+      </div>
+
+      <div class="table-card" id="certificates">
+        <h3><span class="table-name">certificates</span></h3>
+        <table class="cols">
+          <thead><tr><th>Column</th><th>Type</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td><code>id</code></td><td>bigint PK</td><td></td></tr>
+            <tr><td><code>user_id</code></td><td>bigint</td><td>→ workers</td></tr>
+            <tr><td><code>name</code></td><td>string</td><td></td></tr>
+            <tr><td><code>created_at</code> / <code>updated_at</code></td><td>datetime</td><td></td></tr>
+          </tbody>
+        </table>
+        <p class="back"><a href="#top">↑ Contents</a></p>
+      </div>
+    </div>
+
+    <!-- ========== JOBS ========== -->
+
+    <div class="card">
+      <h2>Jobs &amp; hiring</h2>
+
+      <div class="table-card" id="job_posts">
+        <h3><span class="table-name">job_posts</span> <span class="pill">listings</span></h3>
+        <p>Public / company job listings. <code>active</code> + <code>paid</code> gate visibility after Stripe (or voucher) activation.</p>
+        <table class="cols">
+          <thead><tr><th>Column</th><th>Type</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td><code>id</code></td><td>int PK</td><td>Referenced as <code>job_id</code> almost everywhere</td></tr>
+            <tr><td><code>company_id</code></td><td>int</td><td>→ <a href="#companies">companies</a></td></tr>
+            <tr><td><code>name</code></td><td>string</td><td>Job title</td></tr>
+            <tr><td><code>contract</code></td><td>string</td><td>Contract type</td></tr>
+            <tr><td><code>currency</code></td><td>string?</td><td></td></tr>
+            <tr><td><code>reward</code></td><td>string?</td><td>Legacy / display pay field</td></tr>
+            <tr><td><code>duration</code></td><td>string?</td><td></td></tr>
+            <tr><td><code>rate</code></td><td>string?</td><td></td></tr>
+            <tr><td><code>compensation_type</code></td><td>string?(20)</td><td></td></tr>
+            <tr><td><code>rate_period</code></td><td>string?(20)</td><td></td></tr>
+            <tr><td><code>description</code></td><td>string?</td><td></td></tr>
+            <tr><td><code>industry</code></td><td>string?</td><td></td></tr>
+            <tr><td><code>paid</code></td><td>datetime?</td><td>When listing payment completed</td></tr>
+            <tr><td><code>active</code></td><td>bool</td><td>Live on map / list when true</td></tr>
+            <tr><td><code>voucher_code</code></td><td>string?</td><td>Promo used instead of / with pay</td></tr>
+            <tr><td><code>created_at</code> / <code>updated_at</code></td><td>datetime?</td><td></td></tr>
+          </tbody>
+        </table>
+        <div class="highlight">Address for a post is typically in <a href="#addresses">addresses</a>, not inline on this table.</div>
+        <p class="back"><a href="#top">↑ Contents</a> · Related: <a href="#applications">applications</a>, <a href="#vouchers">vouchers</a>, <a href="#jobs">jobs</a></p>
+      </div>
+
+      <div class="table-card" id="applications">
+        <h3><span class="table-name">applications</span></h3>
+        <p>Worker applied to a job post. <code>referral</code> flags referral-path applications.</p>
+        <table class="cols">
+          <thead><tr><th>Column</th><th>Type</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td><code>id</code></td><td>int PK</td><td></td></tr>
+            <tr><td><code>job_id</code></td><td>int</td><td>→ <a href="#job_posts">job_posts.id</a></td></tr>
+            <tr><td><code>user_id</code></td><td>int</td><td>→ <a href="#workers">workers.id</a></td></tr>
+            <tr><td><code>email</code></td><td>string?</td><td></td></tr>
+            <tr><td><code>status</code></td><td>string?</td><td></td></tr>
+            <tr><td><code>accepted_at</code></td><td>datetime?</td><td></td></tr>
+            <tr><td><code>referral</code></td><td>bool</td><td>Came via share / referral path</td></tr>
+            <tr><td><code>created_at</code> / <code>updated_at</code></td><td>datetime?</td><td></td></tr>
+          </tbody>
+        </table>
+        <p class="back"><a href="#top">↑ Contents</a></p>
+      </div>
+
+      <div class="table-card" id="jobs">
+        <h3><span class="table-name">jobs</span> <span class="pill-warn pill">hire ledger — not listings</span></h3>
+        <p>Written when a worker is hired for a job post. Retained for history even if company cleanup occurs.</p>
+        <table class="cols">
+          <thead><tr><th>Column</th><th>Type</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td><code>id</code></td><td>bigint PK</td><td></td></tr>
+            <tr><td><code>workerId</code></td><td>int</td><td>→ workers (column casing as in DB)</td></tr>
+            <tr><td><code>jobId</code></td><td>int</td><td>→ job_posts.id</td></tr>
+            <tr><td><code>companyId</code></td><td>int</td><td>→ companies.id</td></tr>
+            <tr><td><code>created_at</code></td><td>datetime</td><td>Hire time</td></tr>
+          </tbody>
+        </table>
+        <p class="back"><a href="#top">↑ Contents</a></p>
+      </div>
+
+      <div class="table-card" id="connections">
+        <h3><span class="table-name">connections</span></h3>
+        <p>Relationship between a company and a worker (team / network). Required for some share metrics.</p>
+        <table class="cols">
+          <thead><tr><th>Column</th><th>Type</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td><code>id</code></td><td>int PK</td><td></td></tr>
+            <tr><td><code>company_id</code></td><td>int</td><td>→ companies</td></tr>
+            <tr><td><code>user_id</code></td><td>int</td><td>→ workers</td></tr>
+            <tr><td><code>user_email</code></td><td>string</td><td></td></tr>
+            <tr><td><code>status</code></td><td>string</td><td></td></tr>
+            <tr><td><code>accepted_at</code></td><td>datetime?</td><td></td></tr>
+            <tr><td><code>created_at</code> / <code>updated_at</code></td><td>datetime</td><td></td></tr>
+          </tbody>
+        </table>
+        <p class="back"><a href="#top">↑ Contents</a></p>
+      </div>
+
+      <div class="table-card" id="vouchers">
+        <h3><span class="table-name">vouchers</span></h3>
+        <p>Promotional codes that can activate a job post without (or with discounted) Stripe payment.</p>
+        <table class="cols">
+          <thead><tr><th>Column</th><th>Type</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td><code>id</code></td><td>int PK</td><td></td></tr>
+            <tr><td><code>voucher</code></td><td>string</td><td>Code string</td></tr>
+            <tr><td><code>revoked</code></td><td>bool</td><td></td></tr>
+            <tr><td><code>used_by</code></td><td>string?</td><td>Who redeemed</td></tr>
+            <tr><td><code>created_at</code> / <code>updated_at</code></td><td>datetime</td><td></td></tr>
+          </tbody>
+        </table>
+        <p class="back"><a href="#top">↑ Contents</a> · See also <code>job_posts.voucher_code</code></p>
+      </div>
+    </div>
+
+    <!-- ========== REFERRALS ========== -->
+
+    <div class="card">
+      <h2>Referrals &amp; metrics</h2>
+      <div class="highlight">
+        <strong>Two share counters:</strong>
+        <a href="#referral_links">referral_links</a> = global per sharer (token + totals).
+        <a href="#job_metrics">job_metrics</a> = per connected worker × job (View Metrics for a listing).
+      </div>
+
+      <div class="table-card" id="referral_links">
+        <h3><span class="table-name">referral_links</span></h3>
+        <p>Share token for a worker (or company job-share). One row per sharer; counts are global, not per job.</p>
+        <table class="cols">
+          <thead><tr><th>Column</th><th>Type</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td><code>id</code></td><td>int PK</td><td></td></tr>
+            <tr><td><code>referee_id</code></td><td>int</td><td>Sharer id (worker or company context)</td></tr>
+            <tr><td><code>code</code></td><td>string</td><td>Share token</td></tr>
+            <tr><td><code>share_count</code></td><td>int</td><td>Times shared</td></tr>
+            <tr><td><code>application_count</code></td><td>int</td><td>Applies via this token (wide attribution)</td></tr>
+            <tr><td><code>created_at</code> / <code>updated_at</code></td><td>datetime?</td><td></td></tr>
+          </tbody>
+        </table>
+        <p class="back"><a href="#top">↑ Contents</a></p>
+      </div>
+
+      <div class="table-card" id="job_metrics">
+        <h3><span class="table-name">job_metrics</span></h3>
+        <p>Connected workers only — one row per (<code>referee_id</code> worker, <code>job_id</code> post).</p>
+        <table class="cols">
+          <thead><tr><th>Column</th><th>Type</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td><code>id</code></td><td>int PK</td><td></td></tr>
+            <tr><td><code>referee_id</code></td><td>int</td><td>Connected worker who shared</td></tr>
+            <tr><td><code>job_id</code></td><td>int</td><td>→ job_posts</td></tr>
+            <tr><td><code>share_count</code></td><td>int</td><td></td></tr>
+            <tr><td><code>application_count</code></td><td>int</td><td>Applies attributed to that share</td></tr>
+            <tr><td><code>created_at</code> / <code>updated_at</code></td><td>datetime?</td><td></td></tr>
+          </tbody>
+        </table>
+        <p class="back"><a href="#top">↑ Contents</a></p>
+      </div>
+
+      <div class="table-card" id="referrals">
+        <h3><span class="table-name">referrals</span></h3>
+        <p>Successful referral attribution: sharer → applicant → job.</p>
+        <table class="cols">
+          <thead><tr><th>Column</th><th>Type</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td><code>id</code></td><td>int PK</td><td></td></tr>
+            <tr><td><code>referee_id</code></td><td>int</td><td>Who referred</td></tr>
+            <tr><td><code>user_id</code></td><td>int</td><td>Applicant worker</td></tr>
+            <tr><td><code>job_id</code></td><td>int</td><td>→ job_posts</td></tr>
+            <tr><td><code>created_at</code> / <code>updated_at</code></td><td>datetime?</td><td></td></tr>
+          </tbody>
+        </table>
+        <p class="back"><a href="#top">↑ Contents</a></p>
+      </div>
+
+      <div class="table-card" id="open_referrals">
+        <h3><span class="table-name">open_referrals</span></h3>
+        <p>Pending / open referral state before full conversion (includes email of prospect).</p>
+        <table class="cols">
+          <thead><tr><th>Column</th><th>Type</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td><code>id</code></td><td>int PK</td><td></td></tr>
+            <tr><td><code>referee_id</code></td><td>int</td><td></td></tr>
+            <tr><td><code>job_id</code></td><td>int</td><td>→ job_posts</td></tr>
+            <tr><td><code>user_id</code></td><td>int</td><td></td></tr>
+            <tr><td><code>email</code></td><td>string</td><td>Prospect email</td></tr>
+            <tr><td><code>created_at</code> / <code>updated_at</code></td><td>datetime</td><td></td></tr>
+          </tbody>
+        </table>
+        <p class="back"><a href="#top">↑ Contents</a></p>
+      </div>
+
+      <div class="table-card" id="invite_links">
+        <h3><span class="table-name">invite_links</span></h3>
+        <p>Company team-join invite token (one row per company). <strong>Not</strong> used for job shares.</p>
+        <table class="cols">
+          <thead><tr><th>Column</th><th>Type</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td><code>id</code></td><td>int PK</td><td></td></tr>
+            <tr><td><code>company_id</code></td><td>int</td><td>→ companies</td></tr>
+            <tr><td><code>code</code></td><td>string</td><td>Invite token</td></tr>
+            <tr><td><code>share_count</code></td><td>int</td><td>Times invite retrieved / prepared</td></tr>
+            <tr><td><code>created_at</code> / <code>updated_at</code></td><td>datetime?</td><td></td></tr>
+          </tbody>
+        </table>
+        <p class="back"><a href="#top">↑ Contents</a></p>
+      </div>
+    </div>
+
+    <!-- ========== MESSAGING ========== -->
+
+    <div class="card">
+      <h2>Messaging &amp; notifications</h2>
+
+      <div class="table-card" id="message_threads">
+        <h3><span class="table-name">message_threads</span></h3>
+        <table class="cols">
+          <thead><tr><th>Column</th><th>Type</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td><code>id</code></td><td>int PK</td><td></td></tr>
+            <tr><td><code>company_id</code></td><td>int</td><td>→ companies</td></tr>
+            <tr><td><code>worker_id</code></td><td>int</td><td>→ workers</td></tr>
+            <tr><td><code>worker_seen</code> / <code>company_seen</code></td><td>bool</td><td>Read flags</td></tr>
+            <tr><td><code>created_at</code> / <code>updated_at</code></td><td>datetime?</td><td></td></tr>
+          </tbody>
+        </table>
+        <p class="back"><a href="#top">↑ Contents</a> · <a href="#messages">messages</a></p>
+      </div>
+
+      <div class="table-card" id="messages">
+        <h3><span class="table-name">messages</span></h3>
+        <table class="cols">
+          <thead><tr><th>Column</th><th>Type</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td><code>id</code></td><td>int PK</td><td></td></tr>
+            <tr><td><code>thread_id</code></td><td>int</td><td>→ message_threads</td></tr>
+            <tr><td><code>sender</code></td><td>string</td><td>Who sent (role / id encoding)</td></tr>
+            <tr><td><code>body</code></td><td>string</td><td></td></tr>
+            <tr><td><code>created_at</code> / <code>updated_at</code></td><td>datetime</td><td></td></tr>
+          </tbody>
+        </table>
+        <p class="back"><a href="#top">↑ Contents</a></p>
+      </div>
+
+      <div class="table-card" id="notifications">
+        <h3><span class="table-name">notifications</span> <span class="pill">polymorphic</span></h3>
+        <table class="cols">
+          <thead><tr><th>Column</th><th>Type</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td><code>id</code></td><td>int PK</td><td></td></tr>
+            <tr><td><code>notifiable_type</code></td><td>string</td><td>company / worker</td></tr>
+            <tr><td><code>notifiable_id</code></td><td>int</td><td></td></tr>
+            <tr><td><code>title</code></td><td>string</td><td></td></tr>
+            <tr><td><code>body</code></td><td>string?</td><td></td></tr>
+            <tr><td><code>page_url</code> / <code>page_name</code></td><td>string?</td><td>Deep link hints</td></tr>
+            <tr><td><code>read</code></td><td>bool</td><td></td></tr>
+            <tr><td><code>created_at</code> / <code>updated_at</code></td><td>datetime</td><td></td></tr>
+          </tbody>
+        </table>
+        <p class="back"><a href="#top">↑ Contents</a></p>
+      </div>
+
+      <div class="table-card" id="devices">
+        <h3><span class="table-name">devices</span> <span class="pill">polymorphic</span></h3>
+        <p>Push / device registration for companies or workers.</p>
+        <table class="cols">
+          <thead><tr><th>Column</th><th>Type</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td><code>id</code></td><td>int PK</td><td></td></tr>
+            <tr><td><code>devicable_type</code></td><td>string</td><td></td></tr>
+            <tr><td><code>devicable_id</code></td><td>bigint?</td><td></td></tr>
+            <tr><td><code>device_id</code></td><td>string?</td><td>FCM / device token id</td></tr>
+            <tr><td><code>user_agent</code> / <code>make</code></td><td>string?</td><td></td></tr>
+            <tr><td><code>created_at</code> / <code>updated_at</code></td><td>datetime</td><td></td></tr>
+          </tbody>
+        </table>
+        <p class="small">An <code>ip</code> column may exist in MySQL but is unused in the current model.</p>
+        <p class="back"><a href="#top">↑ Contents</a></p>
+      </div>
+    </div>
+
+    <!-- ========== AUTH ========== -->
+
+    <div class="card">
+      <h2>Auth &amp; ops <span class="pill-warn pill">sensitive</span></h2>
+      <div class="note">
+        Included so designs know these tables exist. Do not invent or paste real tokens.
+        Prefer describing “token stored hashed / revoked flag” in take-homes.
+      </div>
+
+      <div class="table-card" id="oauth_access_tokens">
+        <h3><span class="table-name">oauth_access_tokens</span></h3>
+        <table class="cols">
+          <thead><tr><th>Column</th><th>Type</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td><code>id</code></td><td>int PK</td><td></td></tr>
+            <tr><td><code>access_token</code></td><td>string</td><td>Sensitive</td></tr>
+            <tr><td><code>refreshToken</code></td><td>string?</td><td>Sensitive (column casing as in DB)</td></tr>
+            <tr><td><code>user_id</code></td><td>bigint?</td><td></td></tr>
+            <tr><td><code>name</code></td><td>string</td><td>Client / token name</td></tr>
+            <tr><td><code>revoked</code></td><td>bool</td><td></td></tr>
+            <tr><td><code>expires_at</code></td><td>datetime?</td><td></td></tr>
+            <tr><td><code>created_at</code> / <code>updated_at</code></td><td>datetime</td><td></td></tr>
+          </tbody>
+        </table>
+        <p class="back"><a href="#top">↑ Contents</a></p>
+      </div>
+
+      <div class="table-card" id="password_resets">
+        <h3><span class="table-name">password_resets</span></h3>
+        <table class="cols">
+          <thead><tr><th>Column</th><th>Type</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td><code>id</code></td><td>int PK</td><td></td></tr>
+            <tr><td><code>email</code></td><td>string</td><td></td></tr>
+            <tr><td><code>token</code></td><td>string</td><td>Sensitive</td></tr>
+            <tr><td><code>created_at</code> / <code>updated_at</code></td><td>datetime?</td><td></td></tr>
+          </tbody>
+        </table>
+        <p class="back"><a href="#top">↑ Contents</a></p>
+      </div>
+
+      <div class="table-card" id="feedback">
+        <h3><span class="table-name">feedback</span></h3>
+        <table class="cols">
+          <thead><tr><th>Column</th><th>Type</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td><code>id</code></td><td>int PK</td><td></td></tr>
+            <tr><td><code>comment</code></td><td>string</td><td></td></tr>
+            <tr><td><code>entity_id</code></td><td>int</td><td>Submitter context</td></tr>
+            <tr><td><code>screenshot</code></td><td>string?</td><td>Asset URL / key</td></tr>
+            <tr><td><code>created_at</code></td><td>datetime?</td><td></td></tr>
+          </tbody>
+        </table>
+        <p class="back"><a href="#top">↑ Contents</a></p>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Gaps useful for interview tasks</h2>
+      <ul>
+        <li><strong>No subscription / plan / entitlement tables</strong> — greenfield for Backend task 1.</li>
+        <li><strong>No first-class Stripe subscription ids</strong> — today pay-per-job via <code>job_posts.paid</code> / <code>active</code> (+ vouchers).</li>
+        <li><strong>Reporting</strong> — compose from applications, job_posts, jobs (hires), job_metrics, referral_links, connections, notifications.</li>
+      </ul>
+      <p class="small">
+        Source of truth in code: <code>Jobbser-Api/src/Db/AppDbContext.cs</code> and <code>Jobbser-Api/src/Db/Models/*</code>.
+        This HTML is a shareable projection for candidates.
+      </p>
+      <p class="back"><a href="#top">↑ Back to contents</a></p>
+    </div>
+
+  </div>
+
+  <script type="module">
+    import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs";
+    mermaid.initialize({ startOnLoad: true, theme: "neutral" });
+  </script>
+</body>
+</html>

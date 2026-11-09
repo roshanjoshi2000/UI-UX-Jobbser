@@ -1,0 +1,88 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --jb-primary: #4912ff;
+  --jb-primary-hover: #3a0ecc;
+  --jb-subtle: rgba(73, 18, 255, 0.08);
+  --jb-on-primary: #ffffff;
+  --jb-ink: #0a083f;
+  --jb-muted: #5b5770;
+  --jb-border: #e4e2ec;
+  --jb-card: #ffffff;
+  --jb-bg: #f4f3f8;
+  --jb-bg-elevated: #ffffff;
+  --jb-chip-green: #1f7a4d;
+  --jb-count-green: #067647;
+  --jb-plan: #1a0f3d;
+  --background: #ebe9f3;
+  --foreground: #0a083f;
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-family: var(--font-plus-jakarta), "Segoe UI", sans-serif;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+}
+
+::selection {
+  background: rgba(73, 18, 255, 0.18);
+}
+
+@keyframes screen-in {
+  from {
+    transform: translateY(8px);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes check-pop {
+  0% {
+    opacity: 0;
+    transform: scale(0.7);
+  }
+  70% {
+    transform: scale(1.06);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes pin-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(73, 18, 255, 0.35);
+  }
+  50% {
+    box-shadow: 0 0 0 10px rgba(73, 18, 255, 0);
+  }
+}
+
+.animate-screen-in {
+  animation: screen-in 220ms ease-out both;
+}
+
+.animate-check-pop {
+  animation: check-pop 360ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.animate-pin-pulse {
+  animation: pin-pulse 2.2s ease-out infinite;
+}

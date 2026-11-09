@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Jobbser AWS Inventory — Interview Pack</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --color-primary: #4912ff;
+      --color-primary-hover: #3a0ecc;
+      --color-primary-subtle: rgba(73, 18, 255, 0.05);
+      --color-on-primary: #f5f5f5;
+      --color-brand-ink: #0a083f;
+      --color-warn: #b45309;
+      --color-warn-subtle: #fff7ed;
+      --color-bg: #ffffff;
+      --color-bg-secondary: #f5f5f5;
+      --color-border: #d9d9d9;
+      --color-text-primary: #1a1a1a;
+      --color-text-muted: #49454f;
+      --color-text-tertiary: #777777;
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --font-family: "Inter", "Segoe UI", sans-serif;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background:
+        radial-gradient(ellipse 90% 60% at 0% -10%, rgba(73, 18, 255, 0.12), transparent 55%),
+        radial-gradient(ellipse 70% 50% at 100% 0%, rgba(139, 163, 255, 0.18), transparent 50%),
+        var(--color-bg-secondary);
+      color: var(--color-text-primary);
+      font-family: var(--font-family);
+      line-height: 1.55;
+    }
+    .container { max-width: 980px; margin: 0 auto; padding: 28px 20px 64px; }
+    .hero {
+      background: linear-gradient(145deg, #0a083f 0%, #1a0a6e 42%, #4912ff 100%);
+      color: var(--color-on-primary);
+      border-radius: var(--radius-lg);
+      padding: 28px 26px 30px;
+      margin-bottom: 18px;
+      box-shadow: 0 12px 32px rgba(73, 18, 255, 0.28);
+    }
+    .hero h1 { margin: 0 0 8px; font-size: 1.7rem; letter-spacing: -0.02em; }
+    .hero .meta { opacity: 0.9; margin-bottom: 12px; }
+    .hero p { margin: 0 0 8px; max-width: 52rem; }
+    .badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 9999px;
+      background: rgba(255, 255, 255, 0.16);
+      border: 1px solid rgba(255, 255, 255, 0.28);
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin: 0 6px 8px 0;
+    }
+    .card {
+      background: var(--color-bg);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      padding: 22px;
+      margin-bottom: 16px;
+      box-shadow: 0 2px 8px rgba(10, 8, 63, 0.04);
+      scroll-margin-top: 16px;
+    }
+    .card h2 { margin: 0 0 10px; font-size: 1.2rem; color: var(--color-brand-ink); }
+    .card h3 { margin: 16px 0 8px; font-size: 1.05rem; color: var(--color-brand-ink); }
+    .card p, .card li { color: var(--color-text-muted); }
+    .card ul { margin: 8px 0 0; padding-left: 1.25rem; }
+    .small { font-size: 0.88rem; color: var(--color-text-tertiary); }
+    a { color: var(--color-primary); text-decoration: none; font-weight: 600; }
+    a:hover { text-decoration: underline; }
+    .highlight {
+      background: var(--color-primary-subtle);
+      border-left: 3px solid var(--color-primary);
+      padding: 12px 14px;
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+      margin: 12px 0;
+      color: var(--color-text-muted);
+    }
+    .note {
+      background: var(--color-warn-subtle);
+      border: 1px solid #f3d1aa;
+      border-left: 5px solid #d67f00;
+      padding: 12px 14px;
+      border-radius: 8px;
+      color: var(--color-warn);
+      margin: 12px 0;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+      margin-top: 8px;
+    }
+    th, td {
+      border: 1px solid var(--color-border);
+      padding: 10px;
+      text-align: left;
+      vertical-align: top;
+    }
+    th { background: #f0eeff; color: var(--color-brand-ink); }
+    code {
+      font-family: ui-monospace, Consolas, monospace;
+      font-size: 0.86em;
+      background: #f0eeff;
+      padding: 1px 5px;
+      border-radius: 4px;
+    }
+    .toc ul { margin: 0; padding-left: 1.25rem; }
+    .diagram-wrap {
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-sm);
+      padding: 12px;
+      background: #fff;
+      overflow-x: auto;
+      margin-top: 10px;
+    }
+    .back { font-size: 0.85rem; margin-top: 10px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <header class="hero">
+      <h1>Jobbser AWS inventory</h1>
+      <div class="meta">Shareable one-pager for internship take-home tasks · region typically <code style="background:rgba(255,255,255,0.2);color:#fff;">eu-west-1</code></div>
+      <span class="badge">Dev + Prod shape</span>
+      <span class="badge">ECS / Fargate</span>
+      <span class="badge">No account IDs or secret values</span>
+      <p>
+        Logical picture of how Jobbser runs on AWS today. Use this for Terraform / TEST-environment
+        design tasks. Shapes and service names are real; account numbers, ARNs, and secret values are
+        omitted on purpose.
+      </p>
+    </header>
+
+    <div class="card" id="top">
+      <h2>Contents</h2>
+      <ul class="toc">
+        <li><a href="#overview">Environments &amp; workloads</a></li>
+        <li><a href="#services">AWS services we use</a></li>
+        <li><a href="#compute">Compute detail (ECS)</a></li>
+        <li><a href="#data">Data, assets, email, secrets</a></li>
+        <li><a href="#network">Networking &amp; load balancing</a></li>
+        <li><a href="#external">Outside AWS</a></li>
+        <li><a href="#diagram">Architecture diagram</a></li>
+        <li><a href="#comms">How pieces talk</a></li>
+        <li><a href="#cost">Cost reality (context)</a></li>
+        <li><a href="#gaps">Useful gaps for take-homes</a></li>
+        <li><a href="#reviewer">Submit / reviewer</a></li>
+      </ul>
+    </div>
+
+    <div class="card" id="overview">
+      <h2>Environments &amp; workloads</h2>
+      <p>
+        Jobbser is not a single process. On AWS, containerized backends run under
+        <strong>Amazon ECS</strong> (Fargate-compatible task definitions in our current setup).
+      </p>
+      <table>
+        <thead>
+          <tr><th>Environment</th><th>Intent</th><th>Notes</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Prod</strong></td>
+            <td>Live API + real-time hub serving the mobile apps</td>
+            <td>Always-on baseline; primary cost focus</td>
+          </tr>
+          <tr>
+            <td><strong>Dev</strong></td>
+            <td>Non-production cluster for engineering</td>
+            <td>Has existed as a second cluster; keeping it always-on has been expensive — designs that make Dev cheaper / on-demand are highly valued</td>
+          </tr>
+          <tr>
+            <td><strong>TEST</strong> (aspirational)</td>
+            <td>Like-for-like with Prod for release checks</td>
+            <td>Not assumed fully built — see take-home Task 3</td>
+          </tr>
+        </tbody>
+      </table>
+      <h3>Main workloads on ECS</h3>
+      <ul>
+        <li><strong>Jobbser-Api</strong> — ASP.NET Core REST API (jobs, applications, auth, payments hooks, notifications orchestration, S3/SES/Secrets clients).</li>
+        <li><strong>JobbserMsgHub</strong> — dedicated real-time notification / refresh service that clients and the API talk to for live updates (separate deployable from the API).</li>
+      </ul>
+      <div class="highlight">
+        Naming example (illustrative): task families such as <code>jobbser-prd-api</code> and
+        <code>jobbsermsghub-prd</code>, images from ECR in <code>eu-west-1</code>, CloudWatch log groups
+        per service, awsvpc networking, Fargate CPU/memory in the small tier (e.g. 256 CPU / 512 MB class).
+      </div>
+      <p class="back"><a href="#top">↑ Contents</a></p>
+    </div>
+
+    <div class="card" id="services">
+      <h2>AWS services we use</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Service</th>
+            <th>Role in Jobbser</th>
+            <th>What usually drives cost / risk</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Amazon ECS</strong></td>
+            <td>Orchestrates API + MsgHub containers (Dev/Prod shaped clusters).</td>
+            <td>Always-on tasks, over-provisioned CPU/memory, duplicate non-prod baseline.</td>
+          </tr>
+          <tr>
+            <td><strong>Amazon EC2</strong> (where used for capacity)</td>
+            <td>Historically / optionally backs cluster capacity alongside Fargate bill lines.</td>
+            <td>Instance right-sizing, idle capacity, On-Demand mix, attached EBS.</td>
+          </tr>
+          <tr>
+            <td><strong>Amazon ECR</strong></td>
+            <td>Container images for API and MsgHub.</td>
+            <td>Image retention / unused tags (usually small vs compute).</td>
+          </tr>
+          <tr>
+            <td><strong>Elastic Load Balancing (ALB)</strong></td>
+            <td>HTTPS entry to API / hub services.</td>
+            <td>ALB hours (often a large fixed monthly slice).</td>
+          </tr>
+          <tr>
+            <td><strong>Amazon VPC</strong></td>
+            <td>Private networking for tasks, DB, NAT where needed.</td>
+            <td>NAT Gateway hours/data; public IPv4 charges.</td>
+          </tr>
+          <tr>
+            <td><strong>Amazon RDS (MySQL)</strong></td>
+            <td>Primary transactional database (see DB schema pack).</td>
+            <td>Instance class, storage, single-AZ vs Multi-AZ, backups.</td>
+          </tr>
+          <tr>
+            <td><strong>Amazon S3</strong></td>
+            <td>Profile images and uploaded assets.</td>
+            <td>Storage growth, lifecycle, request/transfer volume.</td>
+          </tr>
+          <tr>
+            <td><strong>Amazon SES</strong></td>
+            <td>Transactional / account / notification email.</td>
+            <td>Send volume, bounce/complaint hygiene.</td>
+          </tr>
+          <tr>
+            <td><strong>AWS Secrets Manager</strong></td>
+            <td>Runtime config: DB connection, JWT, Stripe, Firebase, hub endpoint, AWS-related settings.</td>
+            <td>Secret count, retrieval frequency, env duplication.</td>
+          </tr>
+          <tr>
+            <td><strong>CloudWatch Logs</strong></td>
+            <td>Container logs for API and MsgHub.</td>
+            <td>Retention; noisy logging (usually secondary).</td>
+          </tr>
+          <tr>
+            <td><strong>IAM roles</strong></td>
+            <td>Task / execution roles for ECS pulling images and reading secrets.</td>
+            <td>Least privilege; no long-lived keys in app images.</td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="back"><a href="#top">↑ Contents</a></p>
+    </div>
+
+    <div class="card" id="compute">
+      <h2>Compute detail (ECS)</h2>
+      <ul>
+        <li><strong>Launch type / compatibility:</strong> Fargate-compatible task definitions (<code>requiresCompatibilities: FARGATE</code>, <code>networkMode: awsvpc</code>).</li>
+        <li><strong>Typical task size (Prod examples):</strong> on the order of 0.25 vCPU / 0.5 GB RAM per service task — treat as a starting point, not a hard rule.</li>
+        <li><strong>Secrets injection:</strong> task definition can pull a Secrets Manager ARN into an env var (e.g. secret location) at start — values never belong in the take-home repo.</li>
+        <li><strong>Logging:</strong> <code>awslogs</code> driver → per-service log group / stream prefix.</li>
+      </ul>
+      <div class="note">
+        Terraform / GH Actions take-homes should sketch modules and workflow <em>files</em> in your own
+        GitHub repo. They do not need to deploy for real.
+      </div>
+      <p class="back"><a href="#top">↑ Contents</a></p>
+    </div>
+
+    <div class="card" id="data">
+      <h2>Data, assets, email, secrets</h2>
+      <h3>RDS / MySQL</h3>
+      <p>
+        Application schema is documented separately in
+        <code>JOBBSER_DB_SCHEMA.html</code>. Bill snapshots have used a small instance class
+        (e.g. <code>db.t4g.micro</code>-class, single-AZ) — exact class can change; design for a
+        managed MySQL that Prod and a future TEST each own separately.
+      </p>
+      <h3>S3</h3>
+      <p>Object storage for logos, gallery images, and similar uploads from the API.</p>
+      <h3>SES</h3>
+      <p>Outbound email for verification, account, and product notification flows.</p>
+      <h3>Secrets Manager</h3>
+      <p>
+        Bundles runtime configuration the API loads at start (connection string, JWT, Stripe,
+        Firebase, hub URL, etc.). Prefer one secret (or a small set) per environment rather than
+        scattering credentials in task env plaintext.
+      </p>
+      <p class="back"><a href="#top">↑ Contents</a></p>
+    </div>
+
+    <div class="card" id="network">
+      <h2>Networking &amp; load balancing</h2>
+      <ul>
+        <li><strong>ALB</strong> — public HTTPS front door to container services.</li>
+        <li><strong>VPC</strong> — tasks in awsvpc; outbound often via NAT when private subnets are used.</li>
+        <li><strong>Public IPv4</strong> — can be a material line item when many addresses stay allocated.</li>
+        <li><strong>DNS</strong> — API and hub hostnames point at the load-balanced front ends (exact hostnames not required for take-homes).</li>
+      </ul>
+      <p class="back"><a href="#top">↑ Contents</a></p>
+    </div>
+
+    <div class="card" id="external">
+      <h2>Outside AWS (still part of the system)</h2>
+      <table>
+        <thead>
+          <tr><th>System</th><th>Role</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Stripe</strong></td><td>Company job-listing payments (Checkout today).</td></tr>
+          <tr><td><strong>Firebase Cloud Messaging</strong></td><td>Push notifications to devices.</td></tr>
+          <tr><td><strong>GitHub / GitHub Actions</strong></td><td>Source control and CI; mobile tracks toward TestFlight / Play test tracks.</td></tr>
+          <tr><td><strong>App Store / Google Play</strong></td><td>Client distribution (not hosted on AWS).</td></tr>
+        </tbody>
+      </table>
+      <p class="back"><a href="#top">↑ Contents</a></p>
+    </div>
+
+    <div class="card" id="diagram">
+      <h2>Architecture diagram</h2>
+      <div class="diagram-wrap">
+        <pre class="mermaid">
+flowchart LR
+  subgraph Clients
+    MAUI["Jobbser-App MAUI"]
+    WEB["Jobbser-Web Blazor"]
+  end
+
+  subgraph AWS["AWS"]
+    ALB["ALB"]
+    ECS["ECS Fargate"]
+    API["Jobbser-Api"]
+    HUB["JobbserMsgHub"]
+    RDS[("RDS MySQL")]
+    S3["S3 assets"]
+    SES["SES email"]
+    SM["Secrets Manager"]
+    ECR["ECR images"]
+  end
+
+  Stripe["Stripe"]
+  FCM["Firebase FCM"]
+
+  MAUI -->|"HTTPS REST"| ALB
+  WEB -->|"HTTPS REST"| ALB
+  MAUI -->|"realtime"| ALB
+  WEB -->|"realtime"| ALB
+  ALB --> API
+  ALB --> HUB
+  ECS --- API
+  ECS --- HUB
+  ECR --> ECS
+  API --> RDS
+  API --> S3
+  API --> SES
+  API --> SM
+  API --> HUB
+  API --> Stripe
+  API --> FCM
+        </pre>
+      </div>
+      <p class="small">Simplified. Exact listener rules and subnet layout are out of scope for this one-pager.</p>
+      <p class="back"><a href="#top">↑ Contents</a></p>
+    </div>
+
+    <div class="card" id="comms">
+      <h2>How pieces talk</h2>
+      <table>
+        <thead>
+          <tr><th>From</th><th>To</th><th>How</th><th>Why</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Mobile / Web clients</td>
+            <td>Jobbser-Api</td>
+            <td>HTTPS REST via ALB</td>
+            <td>Auth, jobs, applications, messages, profile, payments start</td>
+          </tr>
+          <tr>
+            <td>Mobile / Web clients</td>
+            <td>JobbserMsgHub</td>
+            <td>Realtime connection via ALB</td>
+            <td>Live refresh of jobs, messages, notifications, connections</td>
+          </tr>
+          <tr>
+            <td>Jobbser-Api</td>
+            <td>JobbserMsgHub</td>
+            <td>Server-side invoke after state changes</td>
+            <td>Tell connected clients to refresh</td>
+          </tr>
+          <tr>
+            <td>Jobbser-Api</td>
+            <td>RDS MySQL</td>
+            <td>SQL (EF Core)</td>
+            <td>Transactional persistence</td>
+          </tr>
+          <tr>
+            <td>Jobbser-Api</td>
+            <td>S3 / SES / Secrets Manager</td>
+            <td>AWS SDK</td>
+            <td>Assets, email, config</td>
+          </tr>
+          <tr>
+            <td>Jobbser-Api</td>
+            <td>Stripe / Firebase</td>
+            <td>HTTPS APIs</td>
+            <td>Payments and push</td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="back"><a href="#top">↑ Contents</a></p>
+    </div>
+
+    <div class="card" id="cost">
+      <h2>Cost reality (context for designs)</h2>
+      <p>
+        A real monthly snapshot (order-of-magnitude; numbers change) put most spend in
+        <strong>EC2/NAT + public IPv4 + ECS/Fargate + ALB</strong>, with RDS comparatively small.
+        Dev being always-on was painful enough that Dev has been switched off at times.
+      </p>
+      <p>
+        For take-homes: prefer designs that shrink always-on footprint, avoid duplicate full clusters
+        without a plan, and keep TEST like-for-like without blindly doubling Prod cost.
+      </p>
+      <p class="back"><a href="#top">↑ Contents</a></p>
+    </div>
+
+    <div class="card" id="gaps">
+      <h2>Useful gaps for take-homes</h2>
+      <ul>
+        <li><strong>Terraform:</strong> infra is historically managed operationally; a clean modules + envs + Actions layout is greenfield design work.</li>
+        <li><strong>TEST:</strong> like-for-like Prod shape with its own DB and a justified data strategy is an open design problem.</li>
+        <li><strong>Observability / IaC maturity:</strong> dashboards, Lambdas, and a dedicated Terraform repo are growth areas called out in intern role materials.</li>
+      </ul>
+      <p class="back"><a href="#top">↑ Contents</a></p>
+    </div>
+
+    <div class="card" id="reviewer">
+      <h2>Submit / reviewer</h2>
+      <p>
+        Put your work in your own GitHub repository and invite
+        <a href="https://github.com/johnnycreighton" target="_blank" rel="noopener noreferrer">@johnnycreighton</a>
+        (<span class="small">(<a href="https://github.com/johnnycreighton" target="_blank" rel="noopener noreferrer">https://github.com/johnnycreighton</a>)</span>
+        when ready for review.
+      </p>
+      <p class="small">
+        Companion packs: <code>INTERN_INTERVIEW_TASKS.html</code>, <code>JOBBSER_DB_SCHEMA.html</code>.
+        Sources distilled from Jobbser internal AWS cost brief, architecture notes, and ECS task-definition shapes (sanitized).
+      </p>
+      <p class="back"><a href="#top">↑ Contents</a></p>
+    </div>
+
+  </div>
+
+  <script type="module">
+    import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs";
+    mermaid.initialize({ startOnLoad: true, theme: "neutral" });
+  </script>
+</body>
+</html>
