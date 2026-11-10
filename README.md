@@ -4,7 +4,7 @@ I chose **Task 4** (company subscription UI). Instead of a static Figma board I 
 
 Brand colours match Jobbser: `#4912ff` and `#0a083f`. Auth and payments are mocked in the client. Design notes, assumptions, API shapes, and how I’d test this are in [DESIGN.md](./DESIGN.md).
 
-I spent about **4 hours** on this, including reading the schema / AWS notes and walking the live app’s navigation so the shell would feel familiar.
+I spent about **6 hours** on this, including reading the schema / AWS notes and walking the live app’s navigation so the shell would feel familiar.
 
 ## Run
 
